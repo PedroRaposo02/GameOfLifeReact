@@ -11,6 +11,12 @@ interface GridProps {
   grid: Grid;
 }
 
+export type Cell = {
+  x: number;
+  y: number;
+  isAlive: boolean;
+}
+
 const GameComponent = ({
   hasStarted,
   isGameCleared,
@@ -21,6 +27,7 @@ const GameComponent = ({
 }: GridProps) => {
 
   const cellSize = grid.cellSize;
+  const fps = 60;
 
   const requestRef = React.useRef<number>();
 
@@ -30,9 +37,18 @@ const GameComponent = ({
     )
   );
 
+  
   const animate = React.useCallback(() => {
     requestRef.current = requestAnimationFrame(animate);
   }, []);
+
+  function handleCellClick(rowIndex: number, colIndex: number) {
+    const newCells = [...cells];
+
+    newCells[rowIndex][colIndex] = newCells[rowIndex][colIndex] === 0 ? 1 : 0;
+
+    setCells(newCells);
+  }
   
   useEffect(() => {
     if (randomize) {
@@ -122,27 +138,35 @@ const GameComponent = ({
     }
 
     if (hasStarted) {
-      requestRef.current = requestAnimationFrame(animate);
-      startSimulation();
+      setTimeout(() => {
+        requestRef.current = requestAnimationFrame(startSimulation);
+      }, 1000 / fps);
+      
     } else {
       cancelAnimationFrame(requestRef.current!);
     }
   }, [animate, hasStarted, cells, grid.columns, grid.rows]);
 
   return (
-    <div className={`flex flex-row bg-white`} style={{
-      width: `${grid.columns * cellSize}px`,
-      height: `${grid.rows * cellSize}px`,
-    }}>
+    <div
+      className={`flex flex-row bg-white`}
+      style={{
+        width: `${grid.columns * cellSize}px`,
+        height: `${grid.rows * cellSize}px`,
+      }}
+    >
       {cells.map((row, indexRow) => (
         <div className="flex flex-col" key={indexRow}>
           {row.map((cell, indexCol) => (
             <GridCell
-              cellSize={cellSize}
-              isGameCleared={isGameCleared}
-              setIsGameCleared={setIsGameCleared}
               key={indexCol}
-              cellValue={cell}
+              cellSize={cellSize}
+              handleCellClick={handleCellClick}
+              cell={{
+                x: indexRow,
+                y: indexCol,
+                isAlive: cell === 1,
+              }}
             />
           ))}
         </div>

@@ -1,33 +1,29 @@
 import { useEffect, useState } from "react";
+import { Cell } from "./game-canvas";
 
 interface GridCellProps {
   cellSize: number;
-  isGameCleared: boolean;
-  setIsGameCleared: (isGridCleared: boolean) => void;
-  cellValue: number;
+  cell: Cell;
+  handleCellClick: (rowIndex: number, colIndex: number) => void;
 }
 
 const GridCell = ({
   cellSize,
-  cellValue,
+  cell,
+  handleCellClick,
 }: GridCellProps) => {
-  const [isActive, setIsActive] = useState(cellValue === 1);
-
-  useEffect(() => {
-    setIsActive(cellValue === 1);
-  }, [cellValue]);
 
   return (
     <div
       className={`border border-slate-800 outline-white ${
-        isActive ? "bg-slate-700" : "bg-white"
+        cell.isAlive ? "bg-slate-700" : "bg-white"
         }`}
       style={{
         width: cellSize,
         height: cellSize,
       }}
-      onClick={() => setIsActive(!isActive)}
-    ></div>
+      onClick={() => handleCellClick(cell.x, cell.y)}
+    />
   );
 };
 
