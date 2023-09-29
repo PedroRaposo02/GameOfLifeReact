@@ -19,9 +19,13 @@ const GridCell = ({
 
   return (
     <div
-      className={`w-[${cellSize}px] aspect-square border border-slate-800 outline-white ${
+      className={`border border-slate-800 outline-white ${
         isActive ? "bg-slate-700" : "bg-white"
-      }`}
+        }`}
+      style={{
+        width: cellSize,
+        height: cellSize,
+      }}
       onClick={() => setIsActive(!isActive)}
     ></div>
   );

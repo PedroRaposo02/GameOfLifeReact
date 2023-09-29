@@ -57,6 +57,16 @@ const GameComponent = ({
   }, [grid.columns, grid.rows, isGameCleared, setIsGameCleared]);
 
   useEffect(() => {
+    function createCells() {
+      return Array.from(Array(grid.columns)).map(() =>
+        Array.from(Array(grid.rows)).map(() => 0)
+      );
+    }
+
+    setCells(createCells());
+  }, [grid.columns, grid.rows]);
+
+  useEffect(() => {
     function startSimulation() {
       const newCells: number[][] = [];
 
@@ -120,9 +130,10 @@ const GameComponent = ({
   }, [animate, hasStarted, cells, grid.columns, grid.rows]);
 
   return (
-    <div
-      className={`flex flex-row w-[${grid.columns * cellSize}px] h-[${grid.rows * cellSize}px] bg-white`}
-    >
+    <div className={`flex flex-row bg-white`} style={{
+      width: `${grid.columns * cellSize}px`,
+      height: `${grid.rows * cellSize}px`,
+    }}>
       {cells.map((row, indexRow) => (
         <div className="flex flex-col" key={indexRow}>
           {row.map((cell, indexCol) => (
